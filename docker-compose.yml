@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.4.0
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - '2181:2181'
+
+  kafka:
+    image: confluentinc/cp-kafka:7.4.0
+    depends_on:
+      - zookeeper
+    ports:
+      - '9092:9092'
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+
+  postgres-auth:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: auth_db
+      POSTGRES_USER: auth_user
+      POSTGRES_PASSWORD: auth_pass
+    ports:
+      - '5433:5432'
+    volumes:
+      - pgdata-auth:/var/lib/postgresql/data
+
+  postgres-procurement:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: proc_db
+      POSTGRES_USER: proc_user
+      POSTGRES_PASSWORD: proc_pass
+    ports:
+      - '5434:5432'
+    volumes:
+      - pgdata-procurement:/var/lib/postgresql/data
+
+  postgres-sales:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: sales_db
+      POSTGRES_USER: sales_user
+      POSTGRES_PASSWORD: sales_pass
+    ports:
+      - '5435:5432'
+    volumes:
+      - pgdata-sales:/var/lib/postgresql/data
+
+  postgres-stock-management:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: stock_db
+      POSTGRES_USER: stock_user
+      POSTGRES_PASSWORD: stock_pass
+    ports:
+      - '5436:5432'
+    volumes:
+      - pgdata-stock-management:/var/lib/postgresql/data
+
+  postgres-project-management:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: proj_db
+      POSTGRES_USER: proj_user
+      POSTGRES_PASSWORD: proj_pass
+    ports:
+      - '5437:5432'
+    volumes:
+      - pgdata-project-management:/var/lib/postgresql/data
+
+volumes:
+  pgdata-auth:
+  pgdata-procurement:
+  pgdata-sales:
+  pgdata-stock-management:
+  pgdata-project-management: 
